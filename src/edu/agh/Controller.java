@@ -47,12 +47,12 @@ public class Controller {
         if (file == null) return;
 
         fileNameLabel.setText(file.getName());
-        statusLabel.setText("Data ready");
-
-        resolveButton.setDisable(false);
 
         List<Pair> data = new FileProcessor().getDataFromFile(file);
         resolver.setData(data);
+
+        resolveButton.setDisable(false);
+        statusLabel.setText("Data ready");
     }
 
     @FXML
