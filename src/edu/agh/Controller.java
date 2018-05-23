@@ -3,7 +3,6 @@ package edu.agh;
 import edu.agh.utils.Pair;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -93,7 +92,7 @@ public class Controller {
 
         lineChart.getData().add(series);
 
-        Scene scene = new Scene(lineChart,800,600);
+        Scene scene = new Scene(lineChart, 800, 600);
         stage.setScene(scene);
         stage.show();
     }
@@ -117,7 +116,7 @@ public class Controller {
 
         lineChart.getData().add(series);
 
-        Scene scene = new Scene(lineChart,800,600);
+        Scene scene = new Scene(lineChart, 800, 600);
         stage.setScene(scene);
         stage.show();
     }
