@@ -69,10 +69,18 @@ public class Controller {
 
     @FXML
     public void onShowCharts() {
-        showTemperatureSpecificHeatChart();
+
+        //TODO? każdy wykres ma oddzielny przycisk
+        //showTemperatureSpecificHeatChart();
+        //showInterpolatedTemperatureSpecificHeatChart();
         showTemperatureEnthalpyChart();
+
     }
 
+    //to tylko sugestie żebyś nie musiał się namyślać jak ci się nie chce to jebać
+    //TODO? zapis wyników do pliku na przycisk
+    //TODO usunąc kropki bo wykresy nieczytelne
+    //TODO odznaczenie (kolorem, liniami) zakresu przemiany na wykresie jeśli się da
     private void showTemperatureSpecificHeatChart() {
         Stage stage = new Stage();
         stage.setTitle("Temperature Specific Heat Chart");
@@ -83,11 +91,36 @@ public class Controller {
         yAxis.setLabel("Temperature");
 
         final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setCreateSymbols(false);
 
         XYChart.Series series = new XYChart.Series();
         resolver.getTemperatureSpecificHeatPairs()
                 .forEach(pair ->
                     series.getData().add(new XYChart.Data(pair.getLeftValue(), pair.getRightValue()))
+                );
+
+        lineChart.getData().add(series);
+
+        Scene scene = new Scene(lineChart, 800, 600);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void showInterpolatedTemperatureSpecificHeatChart() {
+        Stage stage = new Stage();
+        stage.setTitle("Interpolated Temperature Specific Heat Chart");
+
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Specific Heat");
+        yAxis.setLabel("Temperature");
+
+        final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+
+        XYChart.Series series = new XYChart.Series();
+        resolver.getInterpolatedTemperatureSpecificHeatPairs()
+                .forEach(pair ->
+                        series.getData().add(new XYChart.Data(pair.getLeftValue(), pair.getRightValue()))
                 );
 
         lineChart.getData().add(series);
@@ -103,21 +136,33 @@ public class Controller {
 
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Enthalpy");
-        yAxis.setLabel("Temperature");
+        xAxis.setLabel("Temperature");
+        yAxis.setLabel("Enthalpy");
 
         final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
 
-        XYChart.Series series = new XYChart.Series();
+        XYChart.Series series1 = new XYChart.Series();
+        XYChart.Series series2 = new XYChart.Series();
+
         resolver.getTemperatureEnthalpyPairs()
                 .forEach(pair ->
-                        series.getData().add(new XYChart.Data(pair.getLeftValue(), pair.getRightValue()))
+                        series1.getData().add(new XYChart.Data(pair.getLeftValue(), pair.getRightValue()))
                 );
 
-        lineChart.getData().add(series);
+        lineChart.getData().add(series1);
+
+        resolver.getNewTemperatureEnthalpyPairs()
+                .forEach(pair ->
+                        series2.getData().add(new XYChart.Data(pair.getLeftValue(), pair.getRightValue()))
+                );
+
+        //lineChart.getData().add(series1);
+        lineChart.getData().add(series2);
 
         Scene scene = new Scene(lineChart, 800, 600);
         stage.setScene(scene);
         stage.show();
+
     }
+
 }
