@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(Main.class.getClassLoader().getResource("main.fxml"));
         primaryStage.setTitle("Specific Heat");
-        primaryStage.setScene(new Scene(root, 500, 200));
+        primaryStage.setScene(new Scene(root, 500, 300));
         primaryStage.setResizable(false);
         primaryStage.show();
     }

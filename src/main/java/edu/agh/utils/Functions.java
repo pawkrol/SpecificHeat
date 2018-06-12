@@ -7,29 +7,20 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 public class Functions {
 
     public static UnivariateFunction function1() {
-
         return x -> 1/x;
-
     }
 
     public static UnivariateFunction function2() {
-
         //funkcja "/"
-
         return x -> x;
-
     }
 
     public static UnivariateFunction function3() {
-
         //funkcja "\"
-
         return x -> -x + 100;
-
     }
 
     public static UnivariateFunction function4() {
-
         //wielomian sklejany "/\"
 
         double knots[] = {0.0, 50.0, 100.0};
@@ -43,7 +34,6 @@ public class Functions {
         };
 
         return new PolynomialSplineFunction(knots, polynomials);
-
     }
 
 }

@@ -1,28 +1,33 @@
 package edu.agh.utils;
 
-public class Pair {
+public class Pair<T, K> {
 
-    private double leftValue;
-    private double rightValue;
+    private T leftValue;
+    private K rightValue;
 
-    public Pair(double leftValue, double rightValue) {
+    public Pair(T leftValue, K rightValue) {
         this.leftValue = leftValue;
         this.rightValue = rightValue;
     }
 
-    public double getLeftValue() {
+    public T getLeftValue() {
         return leftValue;
     }
 
-    public void setLeftValue(double leftValue) {
+    public void setLeftValue(T leftValue) {
         this.leftValue = leftValue;
     }
 
-    public double getRightValue() {
+    public K getRightValue() {
         return rightValue;
     }
 
-    public void setRightValue(double rightValue) {
+    public void setRightValue(K rightValue) {
         this.rightValue = rightValue;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + leftValue + ", " + rightValue + "]";
     }
 }

@@ -13,9 +13,9 @@ import java.util.stream.Stream;
 
 public class FileProcessor {
 
-    public List<Pair> getDataFromFile(File file) {
+    public List<Pair<Double, Double>> getDataFromFile(File file) {
         Path filePath = file.toPath();
-        List<Pair> pairs = new ArrayList<>();
+        List<Pair<Double, Double>> pairs = new ArrayList<>();
 
         try (Stream<String> stream = Files.lines(filePath)){
             stream.forEach(line -> {
@@ -25,7 +25,7 @@ public class FileProcessor {
                 double temperature = Double.parseDouble(words[0]);
                 double specificHeat = Double.parseDouble(words[1]);
 
-                Pair pair = new Pair(temperature, specificHeat);
+                Pair<Double, Double> pair = new Pair<>(temperature, specificHeat);
                 pairs.add(pair);
             });
         } catch (IOException e) {

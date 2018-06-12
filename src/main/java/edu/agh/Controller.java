@@ -1,22 +1,30 @@
 package edu.agh;
 
+import edu.agh.utils.FunctionConverter;
+import edu.agh.utils.Functions;
 import edu.agh.utils.Pair;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.math3.analysis.UnivariateFunction;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
-public class Controller {
+public class Controller implements Initializable{
 
     private final Resolver resolver = new Resolver();
 
@@ -33,7 +41,35 @@ public class Controller {
     private Button resolveButton;
 
     @FXML
-    private Button showChartsButton;
+    private Button tempSHChartButton;
+
+    @FXML
+    private Button interpTempSHChartButton;
+
+    @FXML
+    private Button tempEnthalpyChartButton;
+
+    @FXML
+    private Button exportButton;
+
+    @FXML
+    private TextField t1Input;
+
+    @FXML
+    private TextField t2Input;
+
+    @FXML
+    private TextField enthalpyInput;
+
+    @FXML
+    private ComboBox<Pair<String, UnivariateFunction>> functionsSelect;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        functionsSelect.setConverter(new FunctionConverter());
+        functionsSelect.getItems().addAll(FunctionConverter.getStringUnivariateFunctionPairs());
+        functionsSelect.getSelectionModel().select(0);
+    }
 
     @FXML
     public void onOpen() {
@@ -48,7 +84,7 @@ public class Controller {
 
         fileNameLabel.setText(file.getName());
 
-        List<Pair> data = new FileProcessor().getDataFromFile(file);
+        List<Pair<Double, Double>> data = new FileProcessor().getDataFromFile(file);
         resolver.setData(data);
 
         resolveButton.setDisable(false);
@@ -59,28 +95,44 @@ public class Controller {
     public void onResolve() {
         statusLabel.setText("Calculating...");
 
+        double t1 = Double.parseDouble(t1Input.getText());
+        double t2 = Double.parseDouble(t2Input.getText());
+        double enthalpy = Double.parseDouble(enthalpyInput.getText());
+        UnivariateFunction function = functionsSelect.getSelectionModel()
+                .getSelectedItem()
+                .getRightValue();
+
+        resolver.setT1(t1);
+        resolver.setT2(t2);
+        resolver.setEnthalpy(enthalpy);
+        resolver.setFunction(function);
+
         resolver.resolve(() ->
             Platform.runLater(() -> {
-                showChartsButton.setDisable(false);
+                tempSHChartButton.setDisable(false);
+                interpTempSHChartButton.setDisable(false);
+                tempEnthalpyChartButton.setDisable(false);
+                exportButton.setDisable(false);
                 statusLabel.setText("Ready");
             })
         );
     }
 
     @FXML
-    public void onShowCharts() {
-
-        //TODO? każdy wykres ma oddzielny przycisk
-        //showTemperatureSpecificHeatChart();
-        //showInterpolatedTemperatureSpecificHeatChart();
-        showTemperatureEnthalpyChart();
-
+    public void onTempSHChartButton() {
+        showTemperatureSpecificHeatChart();
     }
 
-    //to tylko sugestie żebyś nie musiał się namyślać jak ci się nie chce to jebać
-    //TODO? zapis wyników do pliku na przycisk
-    //TODO usunąc kropki bo wykresy nieczytelne
-    //TODO odznaczenie (kolorem, liniami) zakresu przemiany na wykresie jeśli się da
+    @FXML
+    public void onInterpTempSHChartButton() {
+        showInterpolatedTemperatureSpecificHeatChart();
+    }
+
+    @FXML
+    public void onTempEnthalpyChartButton() {
+        showTemperatureEnthalpyChart();
+    }
+
     private void showTemperatureSpecificHeatChart() {
         Stage stage = new Stage();
         stage.setTitle("Temperature Specific Heat Chart");
@@ -116,6 +168,7 @@ public class Controller {
         yAxis.setLabel("Temperature");
 
         final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setCreateSymbols(false);
 
         XYChart.Series series = new XYChart.Series();
         resolver.getInterpolatedTemperatureSpecificHeatPairs()
@@ -140,6 +193,7 @@ public class Controller {
         yAxis.setLabel("Enthalpy");
 
         final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setCreateSymbols(false);
 
         XYChart.Series series1 = new XYChart.Series();
         XYChart.Series series2 = new XYChart.Series();
@@ -156,13 +210,11 @@ public class Controller {
                         series2.getData().add(new XYChart.Data(pair.getLeftValue(), pair.getRightValue()))
                 );
 
-        //lineChart.getData().add(series1);
         lineChart.getData().add(series2);
 
         Scene scene = new Scene(lineChart, 800, 600);
         stage.setScene(scene);
         stage.show();
-
     }
 
 }
