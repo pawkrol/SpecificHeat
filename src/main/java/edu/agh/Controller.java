@@ -50,9 +50,6 @@ public class Controller implements Initializable{
     private Button tempEnthalpyChartButton;
 
     @FXML
-    private Button exportButton;
-
-    @FXML
     private TextField t1Input;
 
     @FXML
@@ -112,8 +109,16 @@ public class Controller implements Initializable{
                 tempSHChartButton.setDisable(false);
                 interpTempSHChartButton.setDisable(false);
                 tempEnthalpyChartButton.setDisable(false);
-                exportButton.setDisable(false);
                 statusLabel.setText("Ready");
+
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Output File");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Text", "*.txt")
+                );
+                File file = fileChooser.showSaveDialog(vbox.getScene().getWindow());
+
+                new FileProcessor().saveToFile(file, resolver.getTemperatureEnthalpyPairs(), "temp", "enthalpy");
             })
         );
     }
